@@ -1,2 +1,14 @@
+# Environnement virtuel
 venv/
 .env
+
+# Fichiers compilés Python
+__pycache__/
+*.pyc
+
+# Si vous avez des dossiers de résultats ou de base de données en local
++
+
+# Fichiers système
+.DS_Store
+Thumbs.db
