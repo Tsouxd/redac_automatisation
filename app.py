@@ -7,12 +7,21 @@ from services import extract_text_from_file, process_with_gemini, generate_word_
 app = Flask(__name__)
 app.secret_key = "azerty1234"
 
+# --- CONFIGURATION DES DOSSIERS ---
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
-app.config['RESULT_FOLDER'] = os.path.join(BASE_DIR, 'results')
 
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-os.makedirs(app.config['RESULT_FOLDER'], exist_ok=True)
+# Détection de l'environnement Vercel
+if os.environ.get('VERCEL'):
+    # Sur Vercel, on utilise impérativement le dossier /tmp
+    app.config['UPLOAD_FOLDER'] = '/tmp'
+    app.config['RESULT_FOLDER'] = '/tmp'
+else:
+    # En local sur votre PC
+    app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
+    app.config['RESULT_FOLDER'] = os.path.join(BASE_DIR, 'results')
+    # On ne crée les dossiers QUE si on est en local (sur Vercel /tmp existe déjà)
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(app.config['RESULT_FOLDER'], exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -44,15 +53,15 @@ def index():
             # 2. Générer le contenu avec Gemini
             ai_output = process_with_gemini(txt_src, txt_ex)
 
-            # 3. Créer le Word Final en COPIANT le style du fichier 'path_ex'
+            # 3. Créer le Word Final
             final_doc_name = generate_word_doc_from_template(
                 ai_output, 
                 app.config['RESULT_FOLDER'], 
-                path_ex  # <-- On passe le chemin du modèle pour qu'il soit dupliqué
+                path_ex
             )
             
             download_link = final_doc_name
-            flash('Succès ! Le document conserve le style (Logo, Polices, Marges) du modèle.', 'success')
+            flash('Succès ! Le document est prêt.', 'success')
         else:
             flash("Erreur de lecture des fichiers.", "error")
 
@@ -60,6 +69,7 @@ def index():
 
 @app.route('/download/<path:filename>')
 def download(filename):
+    # send_file ira chercher le fichier dans /tmp sur Vercel
     return send_file(os.path.join(app.config['RESULT_FOLDER'], filename), as_attachment=True)
 
 if __name__ == '__main__':
