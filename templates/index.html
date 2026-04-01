@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Rédactrice Auto ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='poney.ico') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #FFB6C1 0%, #FFE5EC 50%, #FFC0CB 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Cute floating hearts */
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            animation: floatHeart 15s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 25%; animation-delay: 3s; }
+        .heart:nth-child(3) { left: 45%; animation-delay: 1.5s; }
+        .heart:nth-child(4) { left: 65%; animation-delay: 4s; }
+        .heart:nth-child(5) { left: 80%; animation-delay: 2s; }
+        .heart:nth-child(6) { left: 35%; animation-delay: 5s; }
+
+        @keyframes floatHeart {
+            0% { 
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { 
+                transform: translateY(-100px) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            animation: sparkleAnim 3s infinite;
+            opacity: 0;
+        }
+
+        .sparkle:nth-child(7) { left: 15%; top: 20%; animation-delay: 0s; }
+        .sparkle:nth-child(8) { right: 20%; top: 30%; animation-delay: 1s; }
+        .sparkle:nth-child(9) { left: 70%; top: 60%; animation-delay: 2s; }
+        .sparkle:nth-child(10) { right: 15%; bottom: 30%; animation-delay: 1.5s; }
+
+        @keyframes sparkleAnim {
+            0%, 100% { 
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+        }
+
+        /* Cute clouds */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+            animation: floatCloud 20s infinite linear;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 10%;
+            left: -150px;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -20px;
+            right: 10px;
+        }
+
+        @keyframes floatCloud {
+            from { transform: translateX(0); }
+            to { transform: translateX(calc(100vw + 150px)); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 50px 45px;
+            border-radius: 35px;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+            width: 580px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: slideInBounce 1s ease-out;
+            border: 4px solid rgba(255, 182, 193, 0.5);
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.8);
+            }
+            60% {
+                transform: translateY(10px) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Cute decorative elements */
+        .card::before {
+            content: '🎀';
+            position: absolute;
+            top: -30px;
+            right: 30px;
+            font-size: 3em;
+            animation: wiggle 2s infinite;
+        }
+
+        .card::after {
+            content: '🌸';
+            position: absolute;
+            bottom: -25px;
+            left: 30px;
+            font-size: 2.5em;
+            animation: rotate 3s infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        h2 {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 50%, #FF1493 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            animation: rainbow 3s ease-in-out infinite;
+            text-shadow: 2px 2px 0px rgba(255, 182, 193, 0.3);
+        }
+
+        @keyframes rainbow {
+            0%, 100% { filter: hue-rotate(0deg) drop-shadow(0 0 10px rgba(255, 105, 180, 0.5)); }
+            50% { filter: hue-rotate(20deg) drop-shadow(0 0 20px rgba(255, 182, 193, 0.8)); }
+        }
+
+        .subtitle {
+            color: #FF69B4;
+            margin-bottom: 35px;
+            font-weight: 500;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .subtitle::before { content: '✨'; }
+        .subtitle::after { content: '✨'; }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
+            border: 3px solid transparent;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.8s, height 0.8s;
+        }
+
+        .btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 20, 147, 0.6);
+            border-color: #FFB6C1;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+            box-shadow: 0 8px 25px rgba(255, 182, 193, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 105, 180, 0.7);
+            animation: pulse 1s infinite;
+            border-color: #FF69B4;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-5px) scale(1.02); }
+            50% { transform: translateY(-5px) scale(1.05); }
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            border: 3px dashed #FFB6C1;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 240, 245, 0.3) 100%);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            color: #FF69B4;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .file-input-label::before {
+            content: '💝';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.3) 0%, rgba(255, 240, 245, 0.5) 100%);
+            border-color: #FF69B4;
+            transform: scale(1.03) rotate(-1deg);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+        }
+
+        .file-input-label.has-file {
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.3) 0%, rgba(255, 192, 203, 0.4) 100%);
+            border-color: #FF1493;
+            color: #FF1493;
+            animation: successPop 0.6s ease-out;
+        }
+
+        .file-input-label.has-file::before {
+            content: '💖';
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .file-icon {
+            font-size: 2em;
+            margin-right: 10px;
+            animation: wiggle 2s infinite;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #FF69B4;
+            font-size: 1em;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .alert {
+            padding: 18px 25px;
+            margin-bottom: 25px;
+            border-radius: 20px;
+            text-align: left;
+            animation: slideDown 0.6s ease-out;
+            font-weight: 600;
+            border: 3px solid;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #FFE5EC 0%, #FFD6E0 100%);
+            color: #FF1493;
+            border-color: #FF69B4;
+        }
+
+        .alert.error::before {
+            content: '💔 ';
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #FFE5EC 0%, #FFF0F5 100%);
+            color: #FF1493;
+            border-color: #FFB6C1;
+        }
+
+        .alert.success::before {
+            content: '💕 ';
+        }
+
+        .success-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: successBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes successBounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-10deg); }
+            75% { transform: scale(1.1) rotate(10deg); }
+        }
+
+        .download-section {
+            margin: 30px 0;
+        }
+
+        .download-section p {
+            font-size: 1.2em;
+            color: #FF69B4;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #FF69B4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+
+        .back-link:hover {
+            color: #FF1493;
+            transform: translateX(-10px) scale(1.1);
+        }
+
+        .back-link::before {
+            content: '🌈 ';
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 182, 193, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 25px;
+            display: none;
+            border: 2px solid #FFB6C1;
+        }
+
+        .progress-bar.active {
+            display: block;
+            animation: progressPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 105, 180, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 105, 180, 0.6); }
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF69B4 0%, #FFB6C1 50%, #FF1493 100%);
+            width: 0%;
+            animation: progress 2s ease-in-out infinite, rainbow 3s ease-in-out infinite;
+            border-radius: 15px;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        /* Cute loading text */
+        .loading-text {
+            margin-top: 15px;
+            color: #FF69B4;
+            font-weight: 600;
+            font-size: 0.95em;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                width: 90%;
+                padding: 35px 25px;
+            }
+            
+            h2 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cute floating hearts -->
+    <div class="heart">💖</div>
+    <div class="heart">💕</div>
+    <div class="heart">💗</div>
+    <div class="heart">💝</div>
+    <div class="heart">💓</div>
+    <div class="heart">💞</div>
+
+    <!-- Sparkles -->
+    <div class="sparkle">✨</div>
+    <div class="sparkle">⭐</div>
+    <div class="sparkle">✨</div>
+    <div class="sparkle">⭐</div>
+
+    <!-- Cute cloud -->
+    <div class="cloud cloud1"></div>
+
+    <div class="card">
+        <h2>🎀 IA Rédactrice 🎀</h2>
+        <p class="subtitle">Transforme tes documents avec magie</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% if download_link %}
+            <!-- ÉCRAN DE TÉLÉCHARGEMENT -->
+            <div class="download-section">
+                <div class="success-icon">🌸✨🦄</div>
+                <p>Ton document est prêt, ma belle ! 💝</p>
+                <a href="{{ url_for('download', filename=download_link) }}" class="btn btn-success">
+                    <span>
+                        <span>🎁</span>
+                        <span>Télécharger ton chef-d'œuvre</span>
+                        <span>🌟</span>
+                    </span>
+                </a>
+                <a href="/" class="back-link">Créer un autre document magique</a>
+            </div>
+        {% else %}
+            <!-- FORMULAIRE -->
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <label>🌸 Ton brouillon à embellir</label>
+                <div class="file-input-wrapper">
+                    <input type="file" name="doc_source" id="doc_source" required accept=".docx,.txt">
+                    <label for="doc_source" class="file-input-label" id="label_source">
+                        <span class="file-icon">📄</span>
+                        <span class="file-text">Clique ici pour choisir ton brouillon ✨</span>
+                    </label>
+                </div>
+
+                <label>💕 Ton modèle de style adoré</label>
+                <div class="file-input-wrapper">
+                    <input type="file" name="doc_exemple" id="doc_exemple" required accept=".docx,.txt">
+                    <label for="doc_exemple" class="file-input-label" id="label_exemple">
+                        <span class="file-icon">📋</span>
+                        <span class="file-text">Clique ici pour ton modèle de style 💖</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span>
+                        <span>🦄</span>
+                        <span>Lancer la magie de l'IA</span>
+                        <span>✨</span>
+                    </span>
+                </button>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="loading-text" id="loadingText" style="display: none;">
+                    🌈 Gemini travaille sa magie... 🎀
+                </div>
+            </form>
+        {% endif %}
+    </div>
+
+    <script>
+        // Update file input labels when files are selected
+        document.getElementById('doc_source')?.addEventListener('change', function(e) {
+            const label = document.getElementById('label_source');
+            const text = label.querySelector('.file-text');
+            if (e.target.files.length > 0) {
+                text.textContent = '💖 ' + e.target.files[0].name;
+                label.classList.add('has-file');
+            }
+        });
+
+        document.getElementById('doc_exemple')?.addEventListener('change', function(e) {
+            const label = document.getElementById('label_exemple');
+            const text = label.querySelector('.file-text');
+            if (e.target.files.length > 0) {
+                text.textContent = '💝 ' + e.target.files[0].name;
+                label.classList.add('has-file');
+            }
+        });
+
+        // Show progress bar on form submit
+        document.getElementById('uploadForm')?.addEventListener('submit', function() {
+            document.getElementById('progressBar').classList.add('active');
+            document.getElementById('loadingText').style.display = 'block';
+        });
+
+        // Add random sparkle effect on mouse move
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.95) {
+                const sparkle = document.createElement('div');
+                sparkle.textContent = '✨';
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = e.clientX + 'px';
+                sparkle.style.top = e.clientY + 'px';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.animation = 'sparkleAnim 1s forwards';
+                sparkle.style.zIndex = '9999';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>
